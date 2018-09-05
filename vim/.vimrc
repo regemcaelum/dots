@@ -30,13 +30,14 @@ Plugin 'wikitopian/hardmode'
 let g:HardMode_level = 'wannabe'
 autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
 
+" Makefile fixes
+autocmd FileType make setlocal noexpandtab
 
 " ctrl-jklm  changes to that split
 map <c-j> <c-w>j
 map <c-k> <c-w>k
 map <c-l> <c-w>l
 map <c-h> <c-w>h
-
 
 " ==========================================================
 " Basic Settings
@@ -48,54 +49,77 @@ set title                     " show title in console title bar
 
 set wildmenu                  " Menu completion in command mode on <Tab>
 set wildmode=full             " <Tab> cycles between all matching choices.
-let mapleader = ","
-map <Leader>n <plug>NERDTreeTabsToggle<CR>
-
-" don't bell or blink
-set noerrorbells
-set novisualbell
-set vb t_vb=
-" Don't redraw while executing macros (good performance config)
-set lazyredraw
 
 " Ignore these files when completing
 set wildignore+=*.o,*.obj,.git,*.pyc
 set wildignore+=eggs/**
 set wildignore+=*.egg-info/**
 
+let mapleader = ","
+map <Leader>n <plug>NERDTreeTabsToggle<CR>
 
 " Set working directory
 nnoremap <leader>. :lcd %:p:h<CR>
+
+" Remove trailing whitespace on <leader>S
+nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
+
+nnoremap <leader>m :silent make\|redraw!\|cw<CR>
+nnoremap <leader>h :A<CR>
+nnoremap <leader><space> :noh<CR>
+nnoremap <leader>/ :nohlsearch<CR>
+nnoremap <leader>s :mksession<CR>
+nnoremap <leader>a :Ag
+nnoremap <leader>c :SyntasticCheck<CR>:Errors<CR>
+nnoremap <leader>1 :set number!<CR>
+nnoremap <leader>d :Make!
+nnoremap <leader>r :TestFile<CR>
+nnoremap <leader>g :call RunGoFile()<CR>
+" Paste from clipboard
+nnoremap <leader>p "+p
+" Quit window
+nnoremap <leader>q :q<CR>
+vnoremap <leader>y "+y
 
 """ Insert completion
 " don't select first item, follow typing in autocomplete
 set completeopt=menuone,longest,preview
 set pumheight=6             " Keep a small completion window
 
+" don't bell or blink
+set noerrorbells
+set novisualbell
+set vb t_vb=
+
+" Set the colorscheme
+colorscheme inkpot
+set background=dark
 
 """ Moving Around/Editing
-set cursorline                 " have a line indicate the cursor location
-set ruler                      " show the cursor position all the time
-set nostartofline              " Avoid moving cursor to BOL when jumping around
-set virtualedit=block          " Let cursor move past the last char in <C-v> mode
-set scrolloff=3                " Keep 3 context lines above and below the cursor
-set backspace=indent,eol,start " Allow backspacing over autoindent, EOL, and BOL
-set showmatch                  " Briefly jump to a paren once it's balanced
-set nowrap                     " don't wrap text
-set linebreak                  " don't wrap text in the middle of a word
-set autoindent                 " always set autoindenting on
-set tabstop=4                  " <tab> inserts 4 spaces
-set shiftwidth=4               " but an indent level is 2 spaces wide.
-set softtabstop=4              " <BS> over an autoindent deletes both spaces.
-set expandtab                  " Use spaces, not tabs, for autoindent/tab key.
-set shiftround                 " rounds indent to a multiple of shiftwidth
-set matchpairs+=<:>            " show matching <> (html mainly) as well
-set foldmethod=syntax          " allow us to fold on indents
-set foldlevel=10               " don't fold by default
-set number                     " show line numbers
-set relativenumber
+set nocursorline	"highlight current line
+set ruler
+set nowrap
+set linebreak
+set showmatch		"highlight matching parenthesis
+set backspace=indent,eol,start
+let g:vimwiki_list=[{'path':'~/.wiki/'}]
+set autoindent      " Indent automatically
+set tabstop=4		" 4 space tab
+set expandtab		" use spaces for tabs
+set softtabstop=4	" 4 space tab
+set shiftwidth=4
+set shiftround
+set smarttab
+set listchars=tab:>-,eol:$,trail:-,precedes:<,extends:>
+set matchpairs+=<:>
+set nolist
+set number		"show line numbers
+set relativenumber "show the relative distance
+highlight LineNr ctermfg=grey
+set showcmd		"show command in bottom bar
+set fillchars+=vert:\|
 
-"""" Reading/Writing
+""" Reading/Writing
 set noautowrite             " Never write a file unless I request it.
 set noautowriteall          " NEVER.
 set noautoread              " Don't automatically re-read changed files.
@@ -104,9 +128,6 @@ set modelines=5             " they must be within the first or last 5 lines.
 set encoding=utf8           " Set utf8 as standard encoding.
 set ffs=unix,dos,mac        " Try recognizing dos, unix, and mac line endings.
 set spell spelllang=en_us   " Spell checking
-" displays tabs with :set list & displays when a line runs off-screen
-set listchars=tab:>-,eol:$,trail:-,precedes:<,extends:>
-set nolist
 set pastetoggle=<F1>          " Use <F1> to toggle between 'paste' and 'nopaste'
 map <silent> <F2> :NERDTreeToggle<CR>
 " toggle line numbers for pasting out of vim.
@@ -115,88 +136,112 @@ map <silent> <F4> :setlocal spell! spelllang=en_us<CR>
 " Reload Vimrc
 map <silent> <F5> :source ~/.vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
 
-""" Searching and Patterns
-set ignorecase              " Default to using case insensitive searches,
-set smartcase               " unless uppercase letters are used in the regex.
-set smarttab                " Handle tabs more intelligently
-set hlsearch                " Highlight searches by default.
-set incsearch               " Incrementally search while typing a /regex
-set magic                   " For regular expressions turn magic on
+" Searching
+set ignorecase		"ignore case when searching
+set smartcase
+set incsearch		"search as character are entered
+set hlsearch		"highlight all matches
+set magic
 
+"Folding
+set foldmethod=syntax 	"fold based on indent level
+set foldnestmax=10	"max 10 depth
+set foldenable		"don't fold files by default on open
+set foldlevelstart=10	"start with fold level of 1
+" Fold on space
+nnoremap <space> za
 
-" Paste from clipboard
-map <leader>p "+p
-
-" Quit window on <leader>q
-nnoremap <leader>q :q<CR>
-"
-" hide matches on space
-nnoremap <space> :nohlsearch<cr>
-
-" Remove trailing whitespace on <leader>S
-nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
-
-" python with virtualenv support
-
-py << EOF
-import os.path
-import sys
-import vim
-if 'VIRTUAL_ENV' in os.environ:
-    project_base_dir = os.environ['VIRTUAL_ENV']
-    sys.path.insert(0, project_base_dir)
-    activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-    execfile(activate_this, dict(__file__=activate_this))
-EOF
-
-" Load up virtualenv's vimrc if it exists
-if filereadable($VIRTUAL_ENV . '/.vimrc')
-    source $VIRTUAL_ENV/.vimrc
-endif
-
-" dunno why I can't use matchadd for trailing whitespace....?
-highlight ExtraWhitespace ctermbg=darkgreen ctermfg=white guibg=darkgreen
-match ExtraWhitespace /\s\+\%#\@<!$/
+"}}}
+"Line Shortcuts{{{
+nnoremap j gj
+nnoremap k gk
+nnoremap gV'[v']
+"}}}
+"Insert Completion{{{
+set completeopt=menuone,longest,preview
+set pumheight=6
+"}}}
+"Coding Style{{{
+set colorcolumn=81
+highlight ExtraWhiteSpace ctermbg=darkgreen ctermfg=white guibg=darkgreen
+call matchadd('ExtraWhiteSpace', '\s\+\%#\@<!$')
 highlight OverLength ctermbg=red ctermfg=white guibg=red
-call matchadd('OverLength', '\%>80v.\+')
-set colorcolumn=80
-colorscheme badwolf
-set background=dark
+match OverLength /\%>80v.\+/
+"}}}
+"CtrlP{{{
+let g:ctrlp_match_window='bottom,order:ttb'
+let g:ctrlp_switch_buffer=0
+let g:ctrlp_working_path_mode=0
+let g:ctrlp_custom_ignore='\vbuild/|dist/|venv/|target/|\.(o|swp|pyc|egg)$'
+"}}}
+"Syntastic{{{
+let g:syntastic_python_flake8_args='--ignore=E501'
+let g:syntastic_ignore_files=['.java$']
+let g:syntastic_python_python_exec='python3'
+"}}}
+"AutoGroups{{{
+augroup configgroup
+    autocmd!
+    autocmd VimEnter *highlight clear SignColumn
+    autocmd BufWritePRe *.php, *.py, *.js, *.txt, *.hs, *.java, *.md, *.rd :call<SID>StripTrailingWhitespaces()
+    autocmd BufEnter *.cls setlocal filetype=java
+    autocmd BufEnter *.zsh-theme setlocal filetype=zsh
+    autocmd BufEnter Makefile setlocal noexpandtab
+    autocmd BufEnter *.sh setlocal tabstop=2
+    autocmd BufEnter *.sh setlocal softtabstop=2
+    autocmd BufEnter *.sh setlocal shiftwidth=2
+    autocmd BufEnter *.py setlocal tabstop=4
+    autocmd BufEnter *.md setlocal ft=markdown
+augroup END
+"}}}
+"Testing{{{
+let test#strategy = 'neovim'
+let test#python#runner = 'nose'
+"}}}
+"Backups{{{
+set backup
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set backupskip=/tmp/*,/private/tmp/*
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set writebackup
+"}}}
+"airline{{{
+set laststatus=2
+let g:airline_theme = 'zenburn'
+let g:airline_left_sep=''
+let g:airline_left_sep=''
+let g:airline_right_sep=''
+let g:airline_right_sep=''
+"}}}
+"Custom Functions{{{
+function!ToggleNumber()
+    if(&relativenumber ==1)
+        set norelativenumber
+        set number
+    else
+        set relativenumber
+    endif
+endfunc
 
-nnoremap th  :tabfirst<CR>
-nnoremap tj  :tabnext<CR>
-nnoremap tk  :tabprev<CR>
-nnoremap tl  :tablast<CR>
-nnoremap tt  :tabedit<Space>
-nnoremap tn  :tabnext<Space>
-nnoremap tm  :tabm<Space>
-nnoremap td  :tabclose<CR>
-set rtp+=/usr/lib/python2.7/site-packages/powerline/bindings/vim
-" Always show statusline
-" It's useful to show the buffer number in the status line.
-set laststatus=2 statusline=%02n:%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
+"strips trailing whitespace at the end of files. this
+"is called on buffer write in the autogroup above.
+function!<SID>StripTrailingWhitespaces()
+    "save last search & cursor position
+    let _s=@/
+    let l=line(".")
+    let c=col(".")
+    %s/\s\+$//e
+    let @/=_s
+    call cursor(l,c)
+endfunction
 
-set t_Co=256
-autocmd FileType java setlocal shiftwidth=2 tabstop=2
-autocmd FileType cpp setlocal shiftwidth=2 tabstop=2
-let g:syntastic_aggregate_errors = 1
-
-" Mappings to access buffers (don't use "\p" because a
-" delay before pressing "p" would accidentally paste).
-" \l       : list buffers
-" \b \f \g : go back/forward/last-used
-" \1 \2 \3 : go to buffer 1/2/3 etc
-nnoremap <Leader>l :ls<CR>
-nnoremap <Leader>b :bp<CR>
-nnoremap <Leader>f :bn<CR>
-nnoremap <Leader>g :e#<CR>
-nnoremap <Leader>1 :1b<CR>
-nnoremap <Leader>2 :2b<CR>
-nnoremap <Leader>3 :3b<CR>
-nnoremap <Leader>4 :4b<CR>
-nnoremap <Leader>5 :5b<CR>
-nnoremap <Leader>6 :6b<CR>
-nnoremap <Leader>7 :7b<CR>
-nnoremap <Leader>8 :8b<CR>
-nnoremap <Leader>9 :9b<CR>
-nnoremap <Leader>0 :10b<CR>
+function!<SID>CleanFile()
+    "Preparation:save last search and cursor position
+    let _s=@/
+    let l=line(".")
+    let c=col(".")
+    %!git stripspace
+    let @/=_s
+    call cursor(l,c)
+endfunction
+"}}}
