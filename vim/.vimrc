@@ -6,26 +6,59 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 
 " My Bundles here:
-"
 " original repos on github
-Plugin 'tpope/vim-fugitive'
-Plugin 'Lokaltog/vim-easymotion'
+
+" Utility
 Plugin 'ervandew/supertab'
-Plugin 'scrooloose/syntastic'
-Plugin 'jistr/vim-nerdtree-tabs'
-Plugin 'msanders/snipmate.vim'
-Plugin 'tpope/vim-surround'
+Plugin 'Lokaltog/vim-easymotion'
+Plugin 'scrooloose/nerdtree'
 Plugin 'vim-scripts/Gundo'
 Plugin 'phleet/vim-mercenary'
-Plugin 'hynek/vim-python-pep8-indent'
-Plugin 'saltstack/salt-vim'
-Plugin 'wookiehangover/jshint.vim'
-Plugin 'flazz/vim-colorschemes'
+Plugin 'wesQ3/vim-windowswap'
+Plugin 'SirVer/ultisnips'
+Plugin 'junegunn/fzf.vim'
+Plugin 'junegunn/fzf'
 Plugin 'godlygeek/tabular'
-Plugin 'plasticboy/vim-markdown'
-Plugin 'nvie/vim-flake8'
-Plugin 'wikitopian/hardmode'
+Plugin 'tpope/vim-dispatch'
 
+" Generic Programming Support
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'vim-syntastic/syntastic'
+Plugin 'msanders/snipmate.vim'
+Plugin 'gilsondev/searchtasks.vim'
+Plugin 'WolfgangMehner/vim-plugins'
+Plugin 'honza/vim-snippets'
+Plugin 'Townk/vim-autoclose'
+Plugin 'tomtom/tcomment_vim'
+Plugin 'tobyS/vmustache'
+
+" Markdown/Writting
+Plugin 'tpope/vim-surround'
+Plugin 'plasticboy/vim-markdown'
+Plugin 'jtratner/vim-flavored-markdown'
+
+" Git Support
+Plugin 'kablamo/vim-git-log'
+Plugin 'gregsexton/gitv'
+Plugin 'tpope/vim-fugitive'
+
+" C/C++ Support
+
+" Python Support
+Plugin 'hynek/vim-python-pep8-indent'
+Plugin 'nvie/vim-flake8'
+
+" Web-Dev Support (PHP, JS, HTML, CSS)
+Plugin 'wookiehangover/jshint.vim'
+Plugin 'maksimr/vim-jsbeautify'
+Plugin 'phpvim/phpcd.vim'
+Plugin 'tobyS/pdv'
+
+" Theme/Interface
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'flazz/vim-colorschemes'
+Plugin 'ryanoasis/vim-devicons'
 
 let g:HardMode_level = 'wannabe'
 autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
